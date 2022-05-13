@@ -16,7 +16,7 @@
 #ifndef QGC_MAP_URL_ENGINE_H
 #define QGC_MAP_URL_ENGINE_H
 
-
+#include "GeoServerMapProvider.h"
 #include "GoogleMapProvider.h"
 #include "BingMapProvider.h"
 #include "GenericMapProvider.h"
