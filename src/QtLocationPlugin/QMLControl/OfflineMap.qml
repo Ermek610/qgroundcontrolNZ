@@ -395,6 +395,26 @@ Item {
                     visible:        _customURLFact ? _customURLFact.visible : false
                     font.pointSize: _adjustableFontPointSize
                 }
+                QGCLabel {
+                    anchors.left:   parent.left
+                    anchors.right:  parent.right
+                    wrapMode:       Text.WordWrap
+                    text:           qsTr("Geoserver mapset Name:")
+                }
+
+                QGCTextField {
+                    id:                 gsMapSetName
+                }
+
+                QGCLabel {
+                    anchors.left:   parent.left
+                    anchors.right:  parent.right
+                    wrapMode:       Text.WordWrap
+                    text:           qsTr("Geoserver mapset save path:")
+                }
+                QGCTextField {
+                    id:                 gsMapSetSavePath
+                }
             }
         }
     } // Component - optionsDialogComponent
@@ -522,7 +542,7 @@ Item {
                     Row {
                         spacing:    ScreenTools.defaultFontPixelWidth
                         anchors.horizontalCenter: parent.horizontalCenter
-                        visible:    !_defaultSet && mapType !== "Airmap Elevation"
+                        visible:    !_defaultSet && (mapType !== "Airmap Elevation" || mapType !== "Geoserver Elevation")
                         QGCLabel {  text: qsTr("Zoom Levels:"); width: infoView._labelWidth; }
                         QGCLabel {  text: offlineMapView._currentSelection ? (offlineMapView._currentSelection.minZoom + " - " + offlineMapView._currentSelection.maxZoom) : ""; horizontalAlignment: Text.AlignRight; width: infoView._valueWidth; }
                     }
@@ -1073,6 +1093,11 @@ Item {
                 onClicked:      showExport()
             }
             QGCButton {
+                text:           qsTr("Geoserver")
+                width:          _buttonSize
+                onClicked:      geoserverDialog.open()
+            }
+            QGCButton {
                 text:           qsTr("Options")
                 width:          _buttonSize
                 onClicked:      optionsDialogComponent.createObject(mainWindow).open()
@@ -1307,6 +1332,23 @@ Item {
                     }
                 }
             }
+        }
+    }
+    Popup {
+        id:                 geoserverDialog
+        width:              mainWindow.width  * 0.666
+        height:             importCol.height  * 1.5
+        modal:              true
+        focus:              true
+        parent:             Overlay.overlay
+        x:                  Math.round((mainWindow.width  - width)  * 0.5)
+        y:                  Math.round((mainWindow.height - height) * 0.5)
+        closePolicy:        Popup.NoAutoClose
+        background: Rectangle {
+            anchors.fill:   parent
+            color:          qgcPal.windowShadeDark
+            border.color:   qgcPal.text
+            radius:         ScreenTools.defaultFontPixelWidth
         }
     }
 }
