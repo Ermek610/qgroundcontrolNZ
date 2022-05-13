@@ -20,6 +20,7 @@
 #include <QSslConfiguration>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include "GeoserverElevationTileReply.h"
 #include <QJsonArray>
 #include <QTimer>
 #include <QtLocation/private/qgeotilespec_p.h>
@@ -441,6 +442,7 @@ bool TerrainTileManager::getAltitudesForCoordinates(const QList<QGeoCoordinate>&
             }
             altitudes.push_back(elevation);
         } else {
+
             if (_state != State::Downloading) {
                 QNetworkRequest request = getQGCMapEngine()->urlFactory()->getTileURL("Airmap Elevation", getQGCMapEngine()->urlFactory()->long2tileX("Airmap Elevation",coordinate.longitude(), 1), getQGCMapEngine()->urlFactory()->lat2tileY("Airmap Elevation", coordinate.latitude(), 1), 1, &_networkManager);
                 qCDebug(TerrainQueryLog) << "TerrainTileManager::getAltitudesForCoordinates query from database" << request.url();
@@ -453,15 +455,23 @@ bool TerrainTileManager::getAltitudesForCoordinates(const QList<QGeoCoordinate>&
                 connect(reply, &QGeoTiledMapReplyQGC::terrainDone, this, &TerrainTileManager::_terrainDone);
                 _state = State::Downloading;
             }
-            _tilesMutex.unlock();
-
-            return false;
+         //   else if (ElevationProvider = "Geoserver Elevation")
+          //  {
+           //     qCDebug(TerrainQueryLog) << "TerrainTileManager::getAltitudesForCoordinates query from Geoserver" << request.url();
+           //     GeoserverElevationTileReply *reply = new GeoserverElevationTileReply(&_networkManager, request, coordinate.latitude(), coordinate.longitude());
+          //      connect(reply, &GeoserverElevationTileReply::terrainDone, this, &TerrainTileManager::_terrainGeoserverDone);
+            }
+            _state = State::Downloading;
         }
         _tilesMutex.unlock();
-    }
 
-    return true;
-}
+        return false;
+    }
+        //    _tilesMutex.unlock();
+
+
+   // return true;
+//}
 
 void TerrainTileManager::_tileFailed(void)
 {
@@ -550,6 +560,34 @@ void TerrainTileManager::_terrainDone(QByteArray responseBytes, QNetworkReply::N
             }
             _requestQueue.removeAt(i);
         }
+    }
+}
+
+void TerrainTileManager::_terrainGeoserverDone(QNetworkReply::NetworkError error)
+{
+    GeoserverElevationTileReply* reply = qobject_cast<GeoserverElevationTileReply*>(QObject::sender());
+    _state = State::Idle;
+    if (error != QNetworkReply::NoError)
+    {
+        qDebug() << "Geoserver Error" << error;
+        _tileFailed();
+        return;
+    }
+
+    for (int i = _requestQueue.count() - 1; i >= 0; i--) {
+        QList<double> altitudes;
+
+        QueuedRequestInfo_t& requestInfo = _requestQueue[i];
+
+        for (int i = 0; i < requestInfo.coordinates.count(); i++)
+            altitudes.push_back(reply->height());
+
+        if (requestInfo.queryMode == QueryMode::QueryModeCoordinates)
+        {
+            qCDebug(TerrainQueryLog) << "_terrainDone(coordinateQuery): All altitudes taken from cached data";
+            requestInfo.terrainQueryInterface->_signalCoordinateHeights(requestInfo.coordinates.count() == altitudes.count(), altitudes);
+        }
+        _requestQueue.removeAt(i);
     }
 }
 
