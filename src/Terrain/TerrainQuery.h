@@ -124,6 +124,8 @@ public:
 
 private slots:
     void _terrainDone(QByteArray responseBytes, QNetworkReply::NetworkError error);
+        // Костыль, Правильно будет переделать TerrianTile под jsonФайл Geoserver
+    void _terrainGeoserverDone  (QNetworkReply::NetworkError error = QNetworkReply::NoError);
 
 private:
     enum class State {
