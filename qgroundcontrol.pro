@@ -438,6 +438,8 @@ HEADERS += \
     src/api/QGCSettings.h \
     src/api/QmlComponentInfo.h \
     src/GPS/Drivers/src/base_station.h \
+    src/GeoserverElevationTileReply.h \
+    src/Settings/GeoserverSettings.h \
 
 contains (DEFINES, QGC_ENABLE_PAIRING) {
     HEADERS += \
@@ -445,6 +447,8 @@ contains (DEFINES, QGC_ENABLE_PAIRING) {
 }
 
 SOURCES += \
+    src/GeoserverElevationTileReply.cpp \
+    src/Settings/GeoserverSettings.cpp \
     src/Vehicle/VehicleEscStatusFactGroup.cc \
     src/api/QGCCorePlugin.cc \
     src/api/QGCOptions.cc \
@@ -1525,7 +1529,8 @@ contains (CONFIG, QGC_DISABLE_INSTALLER_SETUP) {
     include(QGCPostLinkInstaller.pri)
 }
 
-DISTFILES += \
+DISTFILES +=
+ \
     src/QmlControls/QGroundControl/Specific/qmldir
 
 #
