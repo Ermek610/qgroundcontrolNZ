@@ -31,9 +31,11 @@ HEADERS += \
     $$PWD/EsriMapProvider.h \
     $$PWD/MapboxMapProvider.h \
     $$PWD/QGCTileSet.h \
+    $$PWD/GeoServerMapProvider.h \
 
 
 SOURCES += \
+    $$PWD/GeoServerMapProvider.cpp \
     $$PWD/QGCMapEngine.cpp \
     $$PWD/QGCMapTileSet.cpp \
     $$PWD/QGCMapUrlEngine.cpp \
