@@ -85,6 +85,9 @@ UrlFactory::UrlFactory() : _timeout(5 * 1000) {
     _providersTable["LINZ Basemap"] = new LINZBasemapMapProvider(this);
     
     _providersTable["CustomURL Custom"] = new CustomURLMapProvider(this);
+
+    _providersTable["Geoserver Map"] = new GeoserverMapProvider("http://localhost:8080/geoserver" ,this);
+    _providersTable["Geoserver Elevation"] = new GeoserverElevationProvider("http://localhost:8080/geoserver", this);
 }
 
 void UrlFactory::registerProvider(QString name, MapProvider* provider) {
